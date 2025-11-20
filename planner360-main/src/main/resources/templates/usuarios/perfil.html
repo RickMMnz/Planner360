@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil - Planner360</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 30px 0;
+        }
+
+        .perfil-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 600px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #6a0dad;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-info, .tasks-info {
+            margin-bottom: 20px;
+        }
+
+        .user-info p {
+            font-size: 1.1em;
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #6a0dad;
+            color: white;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .tasks-header {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #6a0dad;
+        }
+    </style>
+</head>
+<body>
+    <div class="perfil-container">
+        <h2>Perfil do Usuário</h2>
+
+        <div class="user-info">
+            <p><strong>Nome:</strong> <span th:text="${usuario.nome}">Nome do Usuário</span></p>
+            <p><strong>Email:</strong> <span th:text="${usuario.email}">email@exemplo.com</span></p>
+            <a th:href="@{/app/usuarios/editar}" class="btn">Editar Perfil</a>
+        </div>
+
+        <div class="tasks-info">
+            <div class="tasks-header">Tarefas Pendentes</div>
+            <p>Total: <span th:text="${pendentes.size()}">0</span></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Data de Vencimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="tarefa : ${pendentes}">
+                        <td th:text="${tarefa.titulo}">Título da tarefa</td>
+                        <td th:text="${tarefa.dataEntrega}">dd/MM/yyyy</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

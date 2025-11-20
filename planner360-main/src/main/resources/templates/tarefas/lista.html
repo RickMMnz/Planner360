@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tarefas</title>
+    <style>
+        /* Corpo da página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        /* Header e footer */
+        header, footer {
+            background-color: #6a0dad;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Links do menu */
+        header nav a {
+            margin-left: 15px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        header nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 30px;
+        }
+
+        h2 {
+            color: #6a0dad;
+        }
+
+        /* Tabela de tarefas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #6a0dad;
+            color: white;
+        }
+
+        /* Botões padrão */
+        .btn, button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover, button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Editar e excluir */
+        a.edit, a.delete {
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: white;
+            display: inline-block;
+        }
+
+        a.edit { background-color: #3498db; }
+        a.edit:hover { background-color: #2980b9; }
+
+        a.delete { background-color: #e74c3c; }
+        a.delete:hover { background-color: #c0392b; }
+
+        /* Dropdown do usuário */
+        .user-menu {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-menu img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid white;
+            vertical-align: middle;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        /* Links e botão do dropdown */
+        .dropdown-content a, .dropdown-content form button {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover, .dropdown-content form button:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Exibe o dropdown ao passar o mouse */
+        .user-menu:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <h1>Planner360</h1>
+        <nav>
+            <a th:href="@{/tarefas/dashboard}">Dashboard</a>
+            <a th:href="@{/tarefas}">Tarefas</a>
+            <a th:href="@{/tarefas/nova}">Nova Tarefa</a>
+        </nav>
+    </div>
+
+    <!-- Dropdown do usuário logado -->
+    <div class="user-menu" th:if="${usuario != null}">
+        <img th:src="@{/images/avatar.png}" alt="Avatar"/>
+        <div class="dropdown-content">
+            <!-- Link para o perfil -->
+            <a th:href="@{/app/usuarios/perfil}">Perfil</a>
+
+            <!-- Formulário POST para logout (mais seguro que GET) -->
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<main>
+    <h2>Lista de Tarefas</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Prioridade</th>
+                <th>Data de Vencimento</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Itera sobre as tarefas do usuário -->
+            <tr th:each="tarefa : ${tarefas}">
+                <td th:text="${tarefa.titulo}">Título</td>
+                <td th:text="${tarefa.descricao}">Descrição</td>
+                <td th:text="${tarefa.tipo}">Categoria</td>
+                <td th:text="${tarefa.prioridade}">Prioridade</td>
+                <td th:text="${tarefa.dataEntrega}">Data</td>
+                <td th:text="${tarefa.status}">Status</td>
+                <td>
+                    <a th:href="@{/tarefas/editar/{id}(id=${tarefa.id})}" class="edit">✏️ Editar</a>
+                    <a th:href="@{/tarefas/excluir/{id}(id=${tarefa.id})}" 
+                       class="delete"
+                       onclick="return confirm('Deseja excluir permanentemente essa tarefa?');">🗑 Excluir</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer>
+    &copy; 2025 Planner360
+</footer>
+</body>
+</html>

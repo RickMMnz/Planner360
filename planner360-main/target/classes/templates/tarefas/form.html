@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${tarefa.id} != null ? 'Editar Tarefa' : 'Nova Tarefa'">Formulário</title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header, footer {
+            background-color: #6a0dad;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+        }
+
+        main {
+            padding: 30px;
+        }
+
+        h2 {
+            color: #6a0dad;
+        }
+
+        form label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            margin-bottom: 10px;
+        }
+
+        button, .btn {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        button:hover, .btn:hover {
+            background-color: #2980b9;
+        }
+
+        a.cancel {
+            margin-left: 10px;
+            color: #6a0dad;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a.cancel:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section>
+        <h2 th:text="${tarefa.id} != null ? 'Editar Tarefa' : 'Nova Tarefa'"></h2>
+
+        <!-- Formulário de criação/edição de tarefa -->
+        <form th:action="@{/tarefas/salvar}" th:object="${tarefa}" method="post">
+            <input type="hidden" th:field="*{id}" />
+
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" th:field="*{titulo}" required />
+
+            <label for="descricao">Descrição:</label>
+            <textarea id="descricao" th:field="*{descricao}"></textarea>
+
+            <label for="tipo">Categoria:</label>
+            <select id="tipo" th:field="*{tipo}">
+                <option value="PESSOAL">Pessoal</option>
+                <option value="TRABALHO">Trabalho</option>
+                <option value="ESTUDO">Estudo</option>
+            </select>
+
+            <label for="dataEntrega">Data de Vencimento:</label>
+            <input type="date" id="dataEntrega" th:field="*{dataEntrega}" />
+
+            <label for="prioridade">Prioridade:</label>
+            <select id="prioridade" th:field="*{prioridade}">
+                <option value="BAIXA">Baixa</option>
+                <option value="MEDIA">Média</option>
+                <option value="ALTA">Alta</option>
+            </select>
+
+            <label for="status">Status:</label>
+            <select id="status" th:field="*{status}">
+                <option value="PENDENTE">Pendente</option>
+                <option value="EM_ANDAMENTO">Em andamento</option>
+                <option value="CONCLUIDA">Concluída</option>
+            </select>
+
+            <button type="submit">Salvar</button>
+            <a th:href="@{/tarefas}" class="cancel">Cancelar</a>
+        </form>
+    </section>
+</main>
+</body>
+</html>
