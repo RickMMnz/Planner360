@@ -26,27 +26,27 @@ O público-alvo são pessoas que buscam melhorar sua produtividade e organizaç�
 
 ## 6. Configuração da Aplicação
 
-# Nome da aplicação
+Nome da aplicação
 spring.application.name=planner360
 
-# Configuração do banco de dados MySQL
+Configuração do banco de dados MySQL
 spring.datasource.url=jdbc:mysql://localhost:3306/planner360?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 spring.datasource.username=root
 spring.datasource.password=S3nh@n0vA7456
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-# Configuração do JPA/Hibernate
+Configuração do JPA/Hibernate
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 
-# Mostrar SQL gerado no console
+Mostrar SQL gerado no console
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-# Usar UTF-8 para evitar problemas com acentuação
+Usar UTF-8 para evitar problemas com acentuação
 spring.datasource.hikari.connection-init-sql=SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
 
-# (Opcional) Configuração de logs para depuração
+(Opcional) Configuração de logs para depuração
 logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
@@ -56,5 +56,12 @@ cd planner360
 mvn spring-boot:run
 #Após a instalação, acesse a aplicação em: http://localhost:8080
 
+## 8. Seed de Usuários
+Foi utilizado o comamandlinerunner com BCyptPasswordEncoder, para criar as Roles de Admmin e user, sendo necessário a inserção de usuário, e-mail e a senha (depois o hash vai criptografar).
+
+## 9. Rotas e Segurança
+
+
+## 10> APE REST
 
 
