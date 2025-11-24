@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Usuários - Planner360</title>
+    <style>
+        /* ===== ESTILOS GERAIS ===== */
+        body { font-family: Arial, sans-serif; margin:0; background:#f9f9f9; color:#333; }
+        header, footer { background:#6a0dad; color:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; }
+        header nav a { margin-left:15px; color:#fff; text-decoration:none; font-weight:bold; }
+        header nav a:hover { text-decoration:underline; }
+        main { padding:30px; }
+        h2 { color:#6a0dad; }
+        table { width:100%; border-collapse:collapse; margin-top:20px; }
+        th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+        th { background:#6a0dad; color:#fff; }
+        a.edit, a.delete { text-decoration:none; font-weight:bold; margin-right:10px; padding:5px 10px; border-radius:4px; color:#fff; display:inline-block; }
+        a.edit { background:#3498db; } a.edit:hover { background:#2980b9; }
+        a.delete { background:#e74c3c; } a.delete:hover { background:#c0392b; }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <h1>Planner360</h1>
+        <nav>
+            <a th:href="@{/admin/usuarios}">Usuários</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <h2>Lista de Usuários</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Papéis</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.nome}">Nome</td>
+                <td th:text="${usuario.email}">Email</td>
+                <td th:text="${usuario.papeis != null ? #lists.join(usuario.papeis, ', ') : ''}">Papéis</td>
+                <td>
+                    <a th:href="@{/admin/usuarios/editar/{id}(id=${usuario.id})}" class="edit">✏️ Editar</a>
+                    <a th:href="@{/admin/usuarios/deletar/{id}(id=${usuario.id})}" class="delete"
+                       onclick="return confirm('Deseja excluir permanentemente esse usuário?');">🗑 Excluir</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+
+<footer>&copy; 2025 Planner360</footer>
+</body>
+</html>

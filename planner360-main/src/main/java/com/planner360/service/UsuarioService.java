@@ -1,6 +1,8 @@
 package com.planner360.service;
 
+import com.planner360.model.Papel;
 import com.planner360.model.Usuario;
+import com.planner360.repository.PapelRepository;
 import com.planner360.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,44 +11,57 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UsuarioService{
-    
-    @Autowired //Injeta automaticamente o repositório
+public class UsuarioService {
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
-    //Listar todos os usuários
+    @Autowired
+    private PapelRepository papelRepository;
+
+    // ===== LISTAR =====
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
 
-    //Buscar Usuário por ID
-    public Optional<Usuario> buscarPorId(Long id){
+    // ===== BUSCAR POR ID =====
+    public Optional<Usuario> buscarPorId(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    //Salvar ou atualizar usuário
-    public Usuario salvar(Usuario usuario){
+    // ===== SALVAR (cadastro + edição) =====
+    public Usuario salvar(Usuario usuario) {
+
+        // Se o ID é nulo → cadastro novo
+        if (usuario.getId() == null) {
+
+            // Garante que ROLE_USER seja atribuído automaticamente
+            Papel papelUser = papelRepository.findByNome("ROLE_USER");
+
+            if (papelUser != null) {
+                usuario.setPapeis(List.of(papelUser));
+            }
+        }
+
         return usuarioRepository.save(usuario);
     }
 
-    //Deletar usuário por ID
-    public void deletar(Long id){
+    // ===== DELETAR =====
+    public void deletar(Long id) {
         usuarioRepository.deleteById(id);
     }
 
-    //Buscar se o e-mail já está cadastrado
-    public Optional<Usuario> buscarPorEmail(String email){
+    // ===== BUSCAR EMAIL =====
+    public Optional<Usuario> buscarPorEmail(String email) {
         return usuarioRepository.findByEmail(email);
     }
 
-    //Verifica se o  e-mail já está cadastrado 
-    public boolean emailExiste(String email){
+    public boolean emailExiste(String email) {
         return usuarioRepository.existsByEmail(email);
     }
 
-    //Buscar usuários por nome
-    public List<Usuario> buscarPorNome(String nome){
+    // ===== BUSCAR POR NOME =====
+    public List<Usuario> buscarPorNome(String nome) {
         return usuarioRepository.findByNomeContainingIgnoreCase(nome);
     }
-
 }

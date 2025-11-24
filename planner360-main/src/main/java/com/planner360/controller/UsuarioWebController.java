@@ -12,10 +12,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult; // Para capturar erros de validação
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import jakarta.validation.Valid; // Importa anotação @Valid
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,24 +63,43 @@ public class UsuarioWebController {
         return "usuarios/cadastro";
     }
 
-    // Salvar novo usuário com validação
+    // Salvar novo usuário
     @PostMapping("/salvar")
-    public String salvarUsuario(@Valid @ModelAttribute Usuario usuario, BindingResult result, Model model) {
-        // Se houver erros de validação, retorna para o formulário
-        if (result.hasErrors()) {
-            return "usuarios/cadastro"; // Mantém os erros no formulário
-        }
-
-        // Criptografa a senha
+    public String salvarUsuario(@ModelAttribute Usuario usuario, Model model) {
         usuario.setSenha(new BCryptPasswordEncoder().encode(usuario.getSenha()));
-
-        // Define papel padrão
         usuario.setPapeis(List.of(papelRepository.findByNome("ROLE_USER")));
-
-        // Salva usuário
         usuarioService.salvar(usuario);
 
-        // Redireciona para login
         return "redirect:/app/usuarios/login";
+    }
+
+    // ================= Métodos para usuário padrão =================
+
+    // Lista de tarefas do usuário logado
+    @GetMapping("/tarefas")
+    public String listarTarefas(@AuthenticationPrincipal User userDetails, Model model) {
+        Usuario usuario = usuarioService.buscarPorEmail(userDetails.getUsername())
+                .orElse(new Usuario());
+
+        List<Tarefa> tarefas = tarefaService.listarPorUsuario(usuario.getId());
+        model.addAttribute("tarefas", tarefas);
+        model.addAttribute("usuario", usuario);
+
+        return "tarefas/lista";
+    }
+
+    // Dashboard do usuário logado
+    @GetMapping("/dashboard")
+    public String dashboard(@AuthenticationPrincipal User userDetails, Model model) {
+        Usuario usuario = usuarioService.buscarPorEmail(userDetails.getUsername())
+                .orElse(new Usuario());
+
+        model.addAttribute("total", tarefaService.contarTotalPorUsuario(usuario.getId()));
+        model.addAttribute("pendentes", tarefaService.contarPendentesPorUsuario(usuario.getId()));
+        model.addAttribute("emAndamento", tarefaService.contarEmAndamentoPorUsuario(usuario.getId()));
+        model.addAttribute("concluidas", tarefaService.contarConcluidasPorUsuario(usuario.getId()));
+        model.addAttribute("usuario", usuario);
+
+        return "tarefas/dashboard";
     }
 }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <style>
+        /* Corpo da página */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -11,13 +12,17 @@
             color: #333;
         }
 
+        /* Header e footer */
         header, footer {
             background-color: #6a0dad;
             color: white;
             padding: 15px 30px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
+        /* Links do menu */
         header nav a {
             margin-left: 15px;
             color: white;
@@ -37,6 +42,7 @@
             color: #6a0dad;
         }
 
+        /* Cards do dashboard */
         .dashboard-cards {
             display: flex;
             gap: 20px;
@@ -75,27 +81,84 @@
         .btn:hover, button:hover {
             background-color: #2980b9;
         }
+
+        /* Dropdown do usuário */
+        .user-menu {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-menu img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid white;
+            vertical-align: middle;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a, .dropdown-content form button {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover, .dropdown-content form button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .user-menu:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
 <header>
     <h1>Planner360</h1>
     <nav>
-        <!-- Links de navegação para as páginas do sistema-->
         <a th:href="@{/tarefas/dashboard}">Dashboard</a>
         <a th:href="@{/tarefas}">Tarefas</a>
         <a th:href="@{/tarefas/nova}">Nova Tarefa</a>
     </nav>
+
+    <!-- Dropdown do usuário logado -->
+    <div class="user-menu" th:if="${usuario != null}">
+        <img th:src="@{/images/avatar.png}" alt="Avatar"/>
+        <div class="dropdown-content">
+            <a th:href="@{/app/usuarios/perfil}">Perfil</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
 </header>
 
 <main>
     <h2>Dashboard</h2>
 
     <div class="dashboard-cards">
-        <!-- Car com informações dinâmicas usando o Thymeleaf -->
         <div class="card">
             <h3>Total de Tarefas</h3>
-            <p th:text="${total}">0</p> <!-- Mostra a quantidade total de tarefas-->
+            <p th:text="${total}">0</p>
         </div>
         <div class="card">
             <h3>Tarefas Pendentes</h3>

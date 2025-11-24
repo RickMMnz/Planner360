@@ -161,10 +161,7 @@
     <div class="user-menu" th:if="${usuario != null}">
         <img th:src="@{/images/avatar.png}" alt="Avatar"/>
         <div class="dropdown-content">
-            <!-- Link para o perfil -->
             <a th:href="@{/app/usuarios/perfil}">Perfil</a>
-
-            <!-- Formulário POST para logout (mais seguro que GET) -->
             <form th:action="@{/logout}" method="post">
                 <button type="submit">Logout</button>
             </form>
@@ -188,7 +185,6 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Itera sobre as tarefas do usuário -->
             <tr th:each="tarefa : ${tarefas}">
                 <td th:text="${tarefa.titulo}">Título</td>
                 <td th:text="${tarefa.descricao}">Descrição</td>

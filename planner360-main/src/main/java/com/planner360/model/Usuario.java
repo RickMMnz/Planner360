@@ -1,7 +1,7 @@
 package com.planner360.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*; // Importa anotações de validação
+import jakarta.validation.constraints.*;
 import java.util.List;
 
 @Entity
@@ -9,18 +9,21 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    // ❗ CORREÇÃO IMPORTANTE:
+    // O ID precisa ser Long (classe wrapper), não long (primitivo).
+    // Isso permite verificar "null" quando o usuário ainda não foi salvo.
+    private Long id;
 
-    @NotBlank(message = "O nome é obrigatório") // Não permite nome vazio
-    @Size(min = 3, max = 50, message = "O nome deve ter entre 3 e 50 caracteres") // Limite de caracteres
+    @NotBlank(message = "O nome é obrigatório")
+    @Size(min = 3, max = 50, message = "O nome deve ter entre 3 e 50 caracteres")
     private String nome;
 
-    @NotBlank(message = "O email é obrigatório") // Não permite email vazio
-    @Email(message = "O email deve ser válido") // Valida formato do email
+    @NotBlank(message = "O email é obrigatório")
+    @Email(message = "O email deve ser válido")
     private String email;
 
-    @NotBlank(message = "A senha é obrigatória") // Não permite senha vazia
-    @Size(min = 6, message = "A senha deve ter ao menos 6 caracteres") // Tamanho mínimo
+    @NotBlank(message = "A senha é obrigatória")
+    @Size(min = 6, message = "A senha deve ter ao menos 6 caracteres")
     private String senha;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -35,8 +38,8 @@ public class Usuario {
     private List<Tarefa> tarefas;
 
     // Getters e setters
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

@@ -35,8 +35,6 @@
         .login-link { text-align: center; margin-top: 15px; }
         .login-link a { color: #3498db; text-decoration: none; }
         .login-link a:hover { text-decoration: underline; }
-
-        /* Estilo para mensagens de erro */
         .error { color: red; font-size: 0.9em; margin-top: 5px; }
     </style>
 </head>
@@ -56,6 +54,9 @@
                 <input type="password" th:field="*{senha}" placeholder="Senha" />
                 <div th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}" class="error"></div>
             </div>
+
+            <!-- ROLE_USER será atribuído automaticamente no backend -->
+
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit" class="btn-cadastrar">Cadastrar</button>
         </form>

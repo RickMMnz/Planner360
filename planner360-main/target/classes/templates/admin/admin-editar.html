@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuário - Planner360</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin:0; background:#f9f9f9; color:#333; }
+        header, footer { background:#6a0dad; color:#fff; padding:15px 30px; text-align:center; }
+        main { padding:30px; }
+        h2 { color:#6a0dad; }
+        form label { display:block; margin-top:10px; }
+        form select, form input { width:100%; padding:6px; margin-top:4px; margin-bottom:10px; }
+        button, .btn { padding:8px 16px; background:#3498db; color:#fff; border:none; border-radius:4px; cursor:pointer; text-decoration:none; }
+        button:hover, .btn:hover { background:#2980b9; }
+        a.cancel { margin-left:10px; color:#6a0dad; text-decoration:none; font-weight:bold; }
+        a.cancel:hover { text-decoration:underline; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Editar Usuário</h1>
+</header>
+
+<main>
+    <form th:action="@{'/admin/usuarios/editar/' + ${usuario.id}}" method="post">
+        <label>Nome:</label>
+        <input type="text" th:value="${usuario.nome}" readonly />
+
+        <label>Email:</label>
+        <input type="email" th:value="${usuario.email}" readonly />
+
+        <label>Papéis:</label>
+        <select name="papeis[]" multiple size="3">
+            <option th:each="papel : ${papeis}"
+                    th:value="${papel.id}"
+                    th:text="${papel.nome}"
+                    th:selected="${usuario.papeis != null ? usuario.papeis.?[id == papel.id].size() > 0 : false}">
+            </option>
+        </select>
+
+        <button type="submit">Salvar</button>
+        <a th:href="@{/admin/usuarios}" class="cancel">Cancelar</a>
+    </form>
+</main>
+
+<footer>&copy; 2025 Planner360</footer>
+</body>
+</html>

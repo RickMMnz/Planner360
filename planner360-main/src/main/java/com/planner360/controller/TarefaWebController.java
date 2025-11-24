@@ -1,6 +1,7 @@
 package com.planner360.controller;
 
 import com.planner360.model.Tarefa;
+import com.planner360.model.Usuario;
 import com.planner360.service.TarefaService;
 import com.planner360.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,70 +14,88 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/tarefas") // Todas as rotas começam com /tarefas
+@RequestMapping("/tarefas")
 public class TarefaWebController {
 
     @Autowired
-    private TarefaService tarefaService; // Serviço que manipula tarefas
+    private TarefaService tarefaService;
 
     @Autowired
-    private UsuarioService usuarioService; // Serviço que manipula usuários
+    private UsuarioService usuarioService;
 
     // Lista todas as tarefas do usuário logado
     @GetMapping
     public String listarTarefas(@AuthenticationPrincipal User userDetails, Model model) {
-        // Pega o ID do usuário logado pelo email
+        if (userDetails == null) {
+            model.addAttribute("error", "Usuário não autenticado. Faça login para acessar suas tarefas.");
+            return "usuarios/login"; // Redireciona para login
+        }
+
         Long usuarioId = usuarioService.buscarPorEmail(userDetails.getUsername())
-                .map(u -> u.getId())
-                .orElse(0L);
+                .map(Usuario::getId)
+                .orElse(null);
 
-        // Busca todas as tarefas desse usuário
+        if (usuarioId == null) {
+            model.addAttribute("error", "Usuário não encontrado no sistema.");
+            return "usuarios/login";
+        }
+
         List<Tarefa> tarefas = tarefaService.listarPorUsuario(usuarioId);
-        model.addAttribute("tarefas", tarefas); // Passa para o Thymeleaf
+        model.addAttribute("tarefas", tarefas);
 
-        // Adiciona o usuário logado ao model (para dropdown de perfil/logout)
         usuarioService.buscarPorEmail(userDetails.getUsername())
                 .ifPresent(u -> model.addAttribute("usuario", u));
 
-        return "tarefas/lista"; // Renderiza lista.html
+        return "tarefas/lista";
     }
 
     // Formulário para criar nova tarefa
     @GetMapping("/nova")
-    public String novaTarefa(Model model) {
-        model.addAttribute("tarefa", new Tarefa()); // Cria uma tarefa vazia
-        return "tarefas/form"; // Renderiza o formulário
+    public String novaTarefa(@AuthenticationPrincipal User userDetails, Model model) {
+        if (userDetails == null) return "redirect:/app/usuarios/login";
+
+        model.addAttribute("tarefa", new Tarefa());
+        return "tarefas/form";
     }
 
     // Formulário para editar tarefa existente
     @GetMapping("/editar/{id}")
-    public String editarTarefa(@PathVariable Long id, Model model) {
-        Tarefa tarefa = tarefaService.buscarPorId(id).orElse(null);
-        if (tarefa == null) return "redirect:/tarefas"; // Se não existe, redireciona
+    public String editarTarefa(@PathVariable Long id, @AuthenticationPrincipal User userDetails, Model model) {
+        if (userDetails == null) return "redirect:/app/usuarios/login";
 
-        model.addAttribute("tarefa", tarefa); // Passa tarefa existente para o formulário
+        Tarefa tarefa = tarefaService.buscarPorId(id).orElse(null);
+        if (tarefa == null) return "redirect:/tarefas";
+
+        model.addAttribute("tarefa", tarefa);
         return "tarefas/form";
     }
 
     // Salva ou atualiza tarefa
     @PostMapping("/salvar")
     public String salvarTarefa(@ModelAttribute Tarefa tarefa, @AuthenticationPrincipal User userDetails) {
-        // Define o usuário logado como dono da tarefa
-        usuarioService.buscarPorEmail(userDetails.getUsername()).ifPresent(u -> tarefa.setUsuario(u));
-        tarefaService.salvar(tarefa); // Salva no banco
-        return "redirect:/tarefas"; // Redireciona para a lista
+        if (userDetails == null) return "redirect:/app/usuarios/login";
+
+        usuarioService.buscarPorEmail(userDetails.getUsername())
+                .ifPresent(tarefa::setUsuario);
+
+        tarefaService.salvar(tarefa);
+        return "redirect:/tarefas";
     }
 
     // Exclui uma tarefa pelo ID
     @GetMapping("/excluir/{id}")
-    public String excluirTarefa(@PathVariable Long id) {
+    public String excluirTarefa(@PathVariable Long id, @AuthenticationPrincipal User userDetails) {
+        if (userDetails == null) return "redirect:/app/usuarios/login";
+
         tarefaService.deletar(id);
-        return "redirect:/tarefas"; // Redireciona para a lista
+        return "redirect:/tarefas";
     }
 
-    // Dashboard do usuário (quantidade de tarefas por status)
+    // Dashboard do usuário
     @GetMapping("/dashboard")
     public String dashboard(@AuthenticationPrincipal User userDetails, Model model) {
+        if (userDetails == null) return "redirect:/app/usuarios/login";
+
         Long usuarioId = usuarioService.buscarPorEmail(userDetails.getUsername())
                 .map(u -> u.getId())
                 .orElse(0L);
@@ -86,6 +105,6 @@ public class TarefaWebController {
         model.addAttribute("emAndamento", tarefaService.contarEmAndamentoPorUsuario(usuarioId));
         model.addAttribute("concluidas", tarefaService.contarConcluidasPorUsuario(usuarioId));
 
-        return "tarefas/dashboard"; // Renderiza dashboard.html
+        return "tarefas/dashboard";
     }
 }
