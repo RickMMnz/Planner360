@@ -52,7 +52,7 @@ logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 
 ## 7. Instalação e Execução
 git clone
-cd planner360
+cd planner360-main
 mvn spring-boot:run
 #Após a instalação, acesse a aplicação em: http://localhost:8080
 
@@ -63,5 +63,6 @@ Foi utilizado o comamandlinerunner com BCyptPasswordEncoder, para criar as Roles
 
 
 ## 10> APE REST
+
 
 
